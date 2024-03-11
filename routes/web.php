@@ -1,42 +1,31 @@
 <?php
-use Illuminate\Http\Request;
+
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PostController;
+use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|* Route::get Consultar
- * Route::post Guardar
- * Route::delete Eliminar
- * Route::put Actualizar
-*/
+Route::controller(PageController::class)->group(
+    function(){
 
+        Route::get('/',             'home')->name('home');
 
+        Route::get('/blog',         'blog')->name('blog');
+        
+        Route::get('/blog/{post:slug}',  'post')->name('post');
 
+    }
+);
 
-Route::get('/', function () {
-    return view('home');
-});
-
-
-Route::get('/blog', function () {
-    return 'listado de blog';
-});
-
-Route::get('/blog/{slug}', function ($slug) {
-
-    return $slug;
-
-});
+//pagina de inicio de sesion automatica de laravel breeze
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::get('/buscar', function (Request $request) {
+//panel de control de los posts
+Route::resource('posts', PostController::class)->except(['show']);
 
-    return $request->all();
+require __DIR__.'/auth.php';
 
-});
