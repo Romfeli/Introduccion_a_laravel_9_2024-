@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -12,10 +13,46 @@ class PostController extends Controller
     ]);
     }
 
-
-    public function create() {
-        return view('posts.create');
+    public function create(Post $post) {
+        return view('posts.create',['post'=> $post]);
     }
+
+
+    public function store(Request $request) {
+
+        $request->validate([
+            'title' => 'required',
+            'slug' => 'required|unique:posts,slug,'. $post->id,
+            'body' => 'required',
+        ]);
+
+
+        $post = $request->user()->posts()->create([
+            'title' => $request->title,
+            'slug' => $request->slug,
+            'body' => $request->body,
+        ]);
+        return redirect()->route('posts.edit', $post);
+    }
+
+    public function update (Request $request, Post $post) {
+
+        $request->validate([
+            'title' => 'required',
+            'slug' => 'required|unique:posts,slug,'. $post->id,
+            'body' => 'required',
+        ]);
+
+
+        $post->update([
+            'title' => $request->title,
+            'slug' => $request->slug,
+            'body' => $request->body,
+        ]);
+        return redirect()->route('posts.edit', $post);
+    }
+
+
 
 
 

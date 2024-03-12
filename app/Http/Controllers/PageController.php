@@ -13,13 +13,17 @@ class PageController extends Controller
 
 
 
-public function home()
+public function home(Request $request)
 
     {
-        return view('home');
+        $search= $request->search;
+
+        $posts = Post::where('title', 'LIKE',"%{$search}%")->with('user')->latest()->paginate();
+
+        return view('home', ['posts' => $posts]);
     }
 
-
+/*
 public function blog()
 
     {
@@ -37,7 +41,7 @@ public function blog()
     //hacer un for each en la vista blog con la variable que se le pasa @foreach($posts as $post)
         return view('blog', ['posts' => $posts] );
     }
-
+*/
 
 
 public function post(Post $post)
